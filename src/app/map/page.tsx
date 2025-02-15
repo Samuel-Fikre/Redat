@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import dynamic from 'next/dynamic'
 import { API_BASE_URL } from '@/config/api'
+import { FeedbackModal } from '@/components/feedback-modal'
 
 // Dynamically import the map component to avoid SSR issues
 const MapComponent = dynamic(() => import('@/components/map'), {
@@ -37,6 +38,7 @@ function MapContent() {
   const [routeData, setRouteData] = useState<RouteData | null>(null)
   const [error, setError] = useState<string>('')
   const [stations, setStations] = useState<Station[]>([])
+  const [showFeedback, setShowFeedback] = useState(false)
 
   // Fetch all stations when component mounts
   useEffect(() => {
@@ -179,9 +181,25 @@ function MapContent() {
                 </div>
               </div>
             )}
+
+            <div className="pt-4 border-t">
+              <button
+                onClick={() => setShowFeedback(true)}
+                className="w-full px-4 py-2 text-sm font-medium text-center text-muted-foreground hover:text-foreground border border-input rounded-md hover:bg-accent transition-colors"
+              >
+                Was this price accurate? Share your feedback
+              </button>
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      <FeedbackModal 
+        isOpen={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        totalPrice={routeData?.total_price || 0}
+        route={routeData?.route.map(s => s.name).join(' → ')}
+      />
     </div>
   )
 }
