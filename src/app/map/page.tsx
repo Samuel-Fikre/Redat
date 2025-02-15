@@ -56,7 +56,6 @@ function MapContent() {
           console.log('Stations loaded successfully:', data.length, 'stations');
           setStations(data)
         } else if (data.stations && Array.isArray(data.stations)) {
-          // Handle case where stations might be nested in an object
           console.log('Stations loaded from nested data:', data.stations.length, 'stations');
           setStations(data.stations)
         } else {
