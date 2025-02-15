@@ -11,7 +11,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 2. For production deployment:
 ```env
 # Production environment (already deployed)
-NEXT_PUBLIC_API_BASE_URL=https://redat-backend.up.railway.app
+NEXT_PUBLIC_API_BASE_URL=
 ```
 
 Note: The production URL is already configured in the deployment platform. You only need to set up the local environment for development.
