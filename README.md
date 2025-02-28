@@ -2,7 +2,7 @@
 
 ## Environment Setup
 
-1. Create a `.env.local` file in the root directory for local development:
+1. Create a `.env.local` file in the root directory for local development::
 ```env
 # For local development
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
