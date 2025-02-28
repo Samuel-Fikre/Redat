@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import dynamic from 'next/dynamic'
 import { API_BASE_URL } from '@/config/api'
 import { FeedbackModal } from '@/components/feedback-modal'
+import { ImageModal } from '@/components/image-modal'
 
 // Dynamically import the map component to avoid SSR issues
 const MapComponent = dynamic(() => import('@/components/map'), {
@@ -15,6 +16,7 @@ const MapComponent = dynamic(() => import('@/components/map'), {
 
 interface Station {
   name: string
+  image?: string
   location: {
     coordinates: [number, number]
   }
@@ -39,6 +41,7 @@ function MapContent() {
   const [error, setError] = useState<string>('')
   const [stations, setStations] = useState<Station[]>([])
   const [showFeedback, setShowFeedback] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<{ url: string; name: string } | null>(null)
 
   // Fetch all stations when component mounts
   useEffect(() => {
@@ -173,8 +176,42 @@ function MapContent() {
                 <div className="space-y-2">
                   {routeData.legs.map((leg, index) => (
                     <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                      <span className="text-sm">{leg.from} → {leg.to}</span>
-                      <span className="font-medium">{leg.price} Birr</span>
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="flex items-center gap-2">
+                          {stations.find(s => s.name === leg.from)?.image && (
+                            <img 
+                              src={stations.find(s => s.name === leg.from)?.image} 
+                              alt={leg.from}
+                              className="w-10 h-10 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                              onClick={() => {
+                                const station = stations.find(s => s.name === leg.from);
+                                if (station?.image) {
+                                  setSelectedImage({ url: station.image, name: station.name });
+                                }
+                              }}
+                            />
+                          )}
+                          <span className="text-sm">{leg.from}</span>
+                        </div>
+                        <span className="text-sm">→</span>
+                        <div className="flex items-center gap-2">
+                          {stations.find(s => s.name === leg.to)?.image && (
+                            <img 
+                              src={stations.find(s => s.name === leg.to)?.image} 
+                              alt={leg.to}
+                              className="w-10 h-10 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                              onClick={() => {
+                                const station = stations.find(s => s.name === leg.to);
+                                if (station?.image) {
+                                  setSelectedImage({ url: station.image, name: station.name });
+                                }
+                              }}
+                            />
+                          )}
+                          <span className="text-sm">{leg.to}</span>
+                        </div>
+                      </div>
+                      <span className="font-medium ml-4">{leg.price} Birr</span>
                     </div>
                   ))}
                 </div>
@@ -198,6 +235,13 @@ function MapContent() {
         onClose={() => setShowFeedback(false)}
         totalPrice={routeData?.total_price || 0}
         route={routeData?.route.map(s => s.name).join(' → ')}
+      />
+
+      <ImageModal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        imageUrl={selectedImage?.url || ''}
+        stationName={selectedImage?.name || ''}
       />
     </div>
   )
