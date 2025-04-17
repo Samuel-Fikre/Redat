@@ -77,7 +77,6 @@ export default function ContributePage() {
     const formData = new FormData(e.currentTarget)
 
     try {
-      console.log('Submitting to:', `${API_BASE_URL}/api/contribute`)
       const response = await fetch(`${API_BASE_URL}/api/contribute`, {
         method: "POST",
         body: formData,
