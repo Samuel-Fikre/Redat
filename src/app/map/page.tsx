@@ -32,6 +32,7 @@ interface RouteData {
   route: Station[]
   total_price: number
   legs: RouteLeg[]
+  isNight: boolean
 }
 
 // Separate client component for search params
@@ -163,6 +164,11 @@ function MapContent() {
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total Fare</p>
               <p className="text-2xl font-bold">{routeData.total_price} Birr</p>
+              {routeData.isNight && (
+                <p className="text-sm text-yellow-600 dark:text-yellow-500 mt-1">
+                  * Night fare applies (18:30 - 22:30)
+                </p>
+              )}
             </div>
             
             <div>
