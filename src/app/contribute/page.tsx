@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
+import { API_BASE_URL } from '@/config/api'
 
 
 const slideIn = (direction: string, type: string, delay: number, duration: number) => ({
@@ -76,23 +77,28 @@ export default function ContributePage() {
     const formData = new FormData(e.currentTarget)
 
     try {
-      const response = await fetch("http://localhost:8080/api/contribute", {
+      console.log('Submitting to:', `${API_BASE_URL}/api/contribute`)
+      const response = await fetch(`${API_BASE_URL}/api/contribute`, {
         method: "POST",
         body: formData,
         mode: "cors",
+        credentials: "same-origin",
+        headers: {
+          'Accept': 'application/json',
+        }
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
-        setSubmitSuccess(true)
-        resetForm()
-      } else {
-        throw new Error(data.error || "Failed to submit form")
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Server response:', errorText)
+        throw new Error(errorText || "Failed to submit form")
       }
+
+      setSubmitSuccess(true)
+      resetForm()
     } catch (error) {
       console.error("Form submission error:", error)
-      setSubmitError("Failed to submit form. Please try again.")
+      setSubmitError(error instanceof Error ? error.message : "Failed to submit form. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
